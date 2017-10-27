@@ -4,6 +4,55 @@
 #include <vector>
 #include <string>
 using namespace std;
+typedef enum{
+  PLANE = 0,
+  SPHERE = 1
+}OBJ_TYPE;
+
+class Object{
+
+  int id;
+  OBJ_TYPE type;
+
+};
+
+
+class Ray {
+
+  public:
+  Vector3f point;
+  Vector3f dir;
+  double lambda;
+
+  int intersect(Object&, Vector3f&);  
+};
+
+class Light {
+
+  public:
+  Vector3f dir;
+  Color color;
+
+  Color coeff_ambi;
+  Color coeff_diff;
+  Color coeff_spec;
+
+  Color int_ambi;
+  Color int_diff;
+  Color int_spec;
+ 
+};
+
+class Scene {
+
+  public:
+  static list<Object> sceneObjects;
+  static Light light;
+  //static Camera camera;
+  //static Image image;
+
+};
+
 class Sphere{
 
 //pointer to light object
@@ -48,5 +97,5 @@ vector<vector<Vector3f> > buffer;
 void initialize();
 void writeToFile();
 }
-#endif 
+#endif /* __SIMPLE_RAY_H__ */
 
