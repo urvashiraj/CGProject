@@ -27,14 +27,40 @@ class Object{
   }
 
 };
-class Camera{
-public:
-Vector3f eyePosition;
-Vector3f lookAt;
-Vector3f upVector;
 
-double aspectRatio;
-double FOV;
+class Image{
+public:
+double imageWidth;
+double imageHeight;
+string filename;
+
+vector<vector<Vector3f> > buffer;
+void initialize();
+void writeToFile();
+};
+
+class Camera{
+
+  public:
+  Vector3f eyePosition;
+  Vector3f lookAt;
+  Vector3f upVector;
+
+  double aspectRatio;
+  double FOV;
+  
+  Camera(){}
+
+  Camera(Vector3f _e, Vector3f _l, Vector3f _u, double _fov, double _ar ) 
+  {
+    eyePosition = _e;
+    lookAt = _l;
+    upVector = _u;
+    aspectRatio = _ar;
+    FOV = _fov;  
+  }
+
+  int getFirstRay(Image&, Vector3f&, Vector3f&, Vector3f&);
 };
 
 
@@ -109,28 +135,17 @@ int computeShade(Vector3f&, Vector3f&, Light&, Camera&, Vector3f&, Vector3f&);
 };
 
 
-class Image{
-public:
-double imageWidth;
-double imageHeight;
-string filename;
-
-vector<vector<Vector3f> > buffer;
-void initialize();
-void writeToFile();
-};
-
 class Scene {
 
   public:
-  static vector<Object*> sceneObjects;
-  static Light light;
+  //static vector<Object*> sceneObjects;
+  //static Light light;
   //static Camera camera;
   //static Image image;
 };
 
-vector<Object*> Scene::sceneObjects;
-Light Scene::light;
+//vector<Object*> Scene::sceneObjects;
+//Light Scene::light;
 
 
 #endif /* __SIMPLE_RAY_H__ */
