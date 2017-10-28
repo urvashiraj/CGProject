@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <string>
+#include <math.h>
 
 using namespace std;
 
@@ -26,6 +27,15 @@ class Object{
   }
 
 };
+class Camera{
+public:
+Vector3f eyePosition;
+Vector3f lookAt;
+Vector3f upVector;
+
+double aspectRatio;
+double FOV;
+};
 
 
 class Ray {
@@ -34,7 +44,13 @@ class Ray {
   Vector3f point;
   Vector3f dir;
   double lambda;
-
+	
+  Ray(){}
+  Ray(Vector3f _c, Vector3f _d, double _l){
+	point=_c;
+	dir=_d;
+	lambda=_l;
+	}
   int intersect(Object&, Vector3f&);  
 };
 
@@ -70,7 +86,7 @@ double shininess;
   }
 
 int computeNormal(Vector3f&, Vector3f&);//input:point onsphere //output:normal vector
-int computeShade(Vector3f&, Vector3f&, Light&, Vector3f&, Vector3f&);
+int computeShade(Vector3f&, Vector3f&, Light&, Camera&, Vector3f&, Vector3f&);
 };
 
 class Plane : public Object {
@@ -82,25 +98,16 @@ Vector3f normalToPlane;
 double shininess;
 
   Plane(){}
-  Plane(int _id, Vector3f _p, Vector3f _n, double _s): Object(_id,PLANE) {
+  Plane(int _id, Vector3f _p, Vector3f _n, double _s): Object(_id,PLANE){
     point = _p;
-    normalToPlane = _n;
+   normalToPlane = _n;
     shininess = _s;    
   }
 
 int computeNormal(Vector3f&, Vector3f&);//input:point onsphere //output:normal vector
-int computeShade(Vector3f&, Vector3f&, Light&, Vector3f&, Vector3f&);
+int computeShade(Vector3f&, Vector3f&, Light&, Camera&, Vector3f&, Vector3f&);
 };
 
-class Camera{
-public:
-Vector3f eyePosition;
-Vector3f lookAt;
-Vector3f upVector;
-
-double aspectRatio;
-double FOV;
-};
 
 class Image{
 public:
