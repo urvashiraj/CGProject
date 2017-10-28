@@ -29,8 +29,7 @@ struct Color {
 	double g;
 	double b;
 
-	Color() {
-	}
+	Color() {}
 
 	Color(double _r, double _g, double _b) {
 		r = _r;
@@ -67,7 +66,7 @@ struct Color {
 	}
 
 	operator const double*() const {
-		return &(x);
+		return &(r);
 	}
 
 };
