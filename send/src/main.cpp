@@ -5,6 +5,8 @@
 
 void init()
 {
+  //level of reflection
+ Scene::level=0;
   //Background
   Scene::bgcolor = Color(.39,.78,1.0);
   //Scene::bgcolor = Color(0.0);

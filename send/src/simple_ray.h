@@ -262,6 +262,7 @@ class Scene {
   static Light light;
   static Camera camera;
   static Image image;
+ static int level;
 };
 
 #endif /* __SIMPLE_RAY_H__ */

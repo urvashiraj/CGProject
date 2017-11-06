@@ -10,7 +10,7 @@ Light Scene::light;
 Camera Scene::camera;
 Image Scene::image;
 Color Scene::bgcolor;
-
+int Scene::level = 0;
 //=============================================================================
 
 //
@@ -399,10 +399,10 @@ if(diffuse > 0.0) {
 		  }
 
 /*--------------------reflection------------------*/
-double k=reflectivity;int level=0;
-while((k>0)&&(level<MAXLEVEL))
+double k=reflectivity;
+if((k>0)&&(Scene::level<MAXLEVEL))
 {
-	level++;
+	Scene::level++;
 	if(reflection>0)
 	{
 	shade.r+=color.r*k;
@@ -415,7 +415,7 @@ while((k>0)&&(level<MAXLEVEL))
 	shade.g+=Scene::bgcolor.g*k;
 	shade.b+=Scene::bgcolor.b*k;
 	}
-
+Scene::level--;
 }
 
   return 0;
