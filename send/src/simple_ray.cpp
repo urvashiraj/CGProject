@@ -237,10 +237,10 @@ int Triangle::computeShade(
   const Vector3f &normal,
   Color &shade,
   double &brightness,
-  double &reflection
+  double &transparent
 )
 {
-  return Object::computeShade(light,raydir,point,normal,shade,brightness,reflection);
+  return Object::computeShade(light,raydir,point,normal,shade,brightness,transparent);
 }
 
 //=============================================================================
@@ -291,10 +291,10 @@ int Sphere::computeShade(
   const Vector3f &normal,
   Color &shade,
   double &brightness,
-  double &reflection
+  double &transparent
 )
 {
-  return Object::computeShade(light,raydir,point,normal,shade,brightness,reflection);
+  return Object::computeShade(light,raydir,point,normal,shade,brightness,transparent);
 }
 
 //=============================================================================
@@ -334,14 +334,14 @@ int Plane::computeShade(
   const Vector3f &dummy,
   Color &shade,
   double &brightness,
-  double &reflection
+  double &transparent
 )
 {
   //Call object shader directly using built in normal
 
   //normal.Print();
   //cout<<endl;
-  return Object::computeShade(light,raydir,point,normal,shade,brightness,reflection);
+  return Object::computeShade(light,raydir,point,normal,shade,brightness,transparent);
 }
 
 //=============================================================================
@@ -370,7 +370,7 @@ int Object::computeShade(
   
   Color &shade,
   double &brightness,
-  double &reflection
+  double &transparent
 )
 {
 
@@ -400,10 +400,17 @@ if(diffuse > 0.0) {
 
 /*--------------------reflection------------------*/
 double k=reflectivity;
+Ray reflection;
+double coeff=-2.0*(raydir).Dot(normal);
+reflection.dir.x=coeff*normal.x+raydir.x;
+reflection.dir.y=coeff*normal.y+raydir.y;
+reflection.dir.z=coeff*normal.z+raydir.z;
+double reflect=0.0;
 if((k>0)&&(Scene::level<MAXLEVEL))
 {
 	Scene::level++;
-	if(reflection>0)
+	int x=computeRayIntersection(reflection, reflect);
+	if(reflect>0&& reflect<FAR_AWAY)
 	{
 	shade.r+=color.r*k;
 	shade.g+=color.g*k;
@@ -417,7 +424,26 @@ if((k>0)&&(Scene::level<MAXLEVEL))
 	}
 Scene::level--;
 }
-
+/*-------------transparency-------------------------*/
+k=transparency;
+if(k>0)
+{
+shade.r*=1-k;
+shade.g*=1-k;
+shade.b*=1-k;
+if(transparent>0&&transparent<FAR_AWAY)
+{
+shade.r+=color.r*k;
+shade.g+=color.g*k;
+shade.b+=color.b*k;
+}
+else
+{
+	shade.r+=Scene::bgcolor.r*k;
+	shade.g+=Scene::bgcolor.g*k;
+	shade.b+=Scene::bgcolor.b*k;
+}
+}
   return 0;
 }
 
@@ -481,23 +507,11 @@ int count=0;
 	count++;
     if((*it)->id == srcid)
       continue;
-//cout<<count<<endl;
-    //Check object intersection
     distance = FAR_AWAY;
 
 	
     (*it)->computeRayIntersection(*this,distance);
-    /*switch((*it)->type)
-    {
-      case PLANE: 
-        (dynamic_cast<Plane*>(*it))->computeRayIntersection(*this,distance); 
-      break;
-      case SPHERE: 
-        (dynamic_cast<Sphere*>(*it))->computeRayIntersection(*this,distance); 
-      break;
-    }*/
 
-   
     if(distance < lambda){
       lambda = distance;
       object = (*it);
@@ -512,7 +526,7 @@ int count=0;
 
   Vector3f intersect_point = point+(dir*lambda);
 
-Vector3f shadow=Vector3f(Scene::light.dir.x-point.x,Scene::light.dir.y-point.y,Scene::light.dir.z-point.z);
+Vector3f shadow=Vector3f(Scene::light.pos.x-point.x,Scene::light.pos.y-point.y,Scene::light.pos.z-point.z);
 double shadowdist=shadow.length();
 ;
 double brightness;
@@ -521,12 +535,12 @@ if(shadowdist<lambda)
 brightness=0.0;//if shadow is formed
 else brightness=1.0;
   object->computeNormal(intersect_point,normal);
-double reflection=0.0;//for multiple reflection
+double transparent=0.0;//for multiple reflection
 if(intersects)
-reflection=lambda;
+transparent=lambda;
 	//cout<<normal;
   object->computeShade(
-    Scene::light,dir,intersect_point,normal,shade,brightness,reflection
+    Scene::light,dir,intersect_point,normal,shade,brightness,transparent
   );
 
   return 0;

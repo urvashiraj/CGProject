@@ -83,6 +83,7 @@ class Ray {
 class Light {
 
   public:
+  Vector3f pos;
   Vector3f dir;
   Color color;
 
@@ -105,14 +106,16 @@ class Object{
   Color color;
   double shininess;
   double reflectivity;
+  double transparency;
 
   Object(){}
-  Object(int _id, OBJ_TYPE _type, Color _c,double _s,double _r) {
+  Object(int _id, OBJ_TYPE _type, Color _c,double _s,double _r, double _t) {
     id = _id; 
     type = _type;
     color = _c;
     shininess = _s;
     reflectivity= _r;
+    transparency=_t;
   }
 
   virtual int computeRayIntersection(const Ray& ray, double &lambda);
@@ -131,7 +134,7 @@ class Sphere : public Object{
   double radius;
 
   Sphere(){}
-  Sphere(int _id, Color _co, double _s,double _re, Vector3f _ce, double _r) : Object(_id,SPHERE,_co,_s,_re) {
+  Sphere(int _id, Color _co, double _s,double _re,double _t, Vector3f _ce, double _r) : Object(_id,SPHERE,_co,_s,_re,_t) {
     center = _ce;
     radius = _r;
   }
@@ -153,7 +156,7 @@ class Plane : public Object {
   Vector3f normal;
 
   Plane(){}
-  Plane(int _id, Color _c, double _s,double _r, Vector3f _p, Vector3f _n): Object(_id,PLANE,_c,_s,_r){
+  Plane(int _id, Color _c, double _s,double _r,double _t, Vector3f _p, Vector3f _n): Object(_id,PLANE,_c,_s,_r,_t){
     point = _p;
     normal = _n.Normalize();
   }
@@ -178,7 +181,7 @@ class Triangle : public Object {
  // double planeConstant;//,edgeConstant1,edgeContant2,edgeConstant3;
 
   Triangle(){}
-  Triangle(int _id, Color _c, double _s,double _r, Vector3f _p1, Vector3f _p2, Vector3f _p3, Vector3f _p4): Object(_id,TRIANGLE,_c,_s,_r){
+  Triangle(int _id, Color _c, double _s,double _r,double _t, Vector3f _p1, Vector3f _p2, Vector3f _p3, Vector3f _p4): Object(_id,TRIANGLE,_c,_s,_r,_t){
    vertex1=_p1;
    vertex2=_p2;
    vertex3=_p3;
@@ -198,7 +201,7 @@ class Triangle : public Object {
 };
 
 
-class Box : public Object {
+/*class Box : public Object {
 
   public:
 
@@ -252,7 +255,7 @@ public:
   );
 
 };
-
+*/
 class Scene {
 
   public:

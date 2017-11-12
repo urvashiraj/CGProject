@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS= -DNO_FREETYPE  -L. -I. 
+CFLAGS= -DNO_FREETYPE -fopenmp  -L. -I. 
 LIBS= -lm -lpngwriter -lpng16 -lz
 
 ray: main.cpp simple_ray.cpp
